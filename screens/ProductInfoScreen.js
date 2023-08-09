@@ -8,17 +8,37 @@ import {
   TextInput,
   View,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
+import { useDispatch, useSelector } from "react-redux";
+import {addToCart} from '../redux/CartReducer';
+
 
 const ProductInfoScreen = () => {
+
   const { width } = Dimensions.get("window");
   const height = (width * 100) / 100;
   const route = useRoute();
+  const dispatch = useDispatch();
+
+  const [addedToCart, setAddedToCart] = useState(false);
+
+  const cart = useSelector((state) => state.cart.cart);
+  console.log("shivi",cart);
+
+
+const addItemToCart = (item) => {
+  setAddedToCart(true);
+  dispatch(addToCart(item));
+  setTimeout(() => {
+    setAddedToCart(false);
+  }, 60000);
+};
+
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
@@ -142,14 +162,14 @@ const ProductInfoScreen = () => {
       <Text style={{ height: 1, borderColor: "#D0D0D0", borderWidth: 1 }} />
 
       <View style={{ flexDirection: "row", alignItems: "center", padding: 8 }}>
-        <Text>Color:</Text>
+        <Text>Color: </Text>
         <Text style={{ fontSize: 15, fontWeight: "bold" }}>
           {route.params?.color}
         </Text>
       </View>
 
       <View style={{ flexDirection: "row", alignItems: "center", padding: 8 }}>
-        <Text>Size:</Text>
+        <Text>Size: </Text>
         <Text style={{ fontSize: 15, fontWeight: "bold" }}>
           {route.params?.size}
         </Text>
@@ -184,6 +204,7 @@ const ProductInfoScreen = () => {
           In Stock
         </Text>
         <Pressable
+          onPress={() => addItemToCart(route?.params?.item)}
           style={{
             backgroundColor: "#FFC72C",
             padding: 10,
@@ -194,7 +215,13 @@ const ProductInfoScreen = () => {
             marginVertical: 10,
           }}
         >
+         {addedToCart ? (
+          <View>
+            <Text>Added to Cart</Text>
+          </View>
+        ) : (
           <Text>Add to Cart</Text>
+        )}
         </Pressable>
         <Pressable  style={{
             backgroundColor: "#FFAC1C",

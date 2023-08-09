@@ -9,15 +9,18 @@ import {
   Pressable,
   Image,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 // import { SafeAreaView } from "react-native-safe-area-context";
 import { AntDesign } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { SliderBox } from "react-native-image-slider-box";
-import axios from 'axios'
+import axios from "axios";
 import ProductItem from "../components/ProductItem";
+import DropDownPicker from "react-native-dropdown-picker";
+import { useNavigation } from "@react-navigation/native";
+import { useSelector } from "react-redux";
 
 const HomeScreen = () => {
   const list = [
@@ -193,19 +196,42 @@ const HomeScreen = () => {
     },
   ];
 
-  const [products,setProducts] = useState([])
-  useEffect(()=> {
-const fetchData = async ()=> {
-    try {
-        const response = await axios.get('https://fakestoreapi.com/products')
-        setProducts(response.data)
-    } catch (error) {
-        console.log("Error in fetchData",error)
-    }
-}
-fetchData()
-  },[])
-console.log("Products",products)
+  const navigation= useNavigation()
+
+  const [products, setProducts] = useState([]);
+  const [addresses, setAddresses] = useState([]);
+  //const { userId, setUserId } = useContext(UserType);
+  const [open, setOpen] = useState(false);
+  const [category, setCategory] = useState("jewelery");
+  //const [selectedAddress,setSelectedAdress] = useState("");
+  //console.log(selectedAddress)
+  const [items, setItems] = useState([
+    { label: "Men's clothing", value: "men's clothing" },
+    { label: "jewelery", value: "jewelery" },
+    { label: "electronics", value: "electronics" },
+    { label: "women's clothing", value: "women's clothing" },
+  ]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("https://fakestoreapi.com/products");
+        setProducts(response.data);
+      } catch (error) {
+        console.log("Error in fetchData", error);
+      }
+    };
+    fetchData();
+  }, []);
+  console.log("Products", products);
+
+  const onGenderOpen = useCallback(() => {
+    // setCompanyOpen(false);
+  }, []);
+
+  const cart = useSelector((state)=>state.cart.cart)
+  console.log(cart)
+
   return (
     <SafeAreaView
       style={{
@@ -345,6 +371,16 @@ console.log("Products",products)
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {offers.map((item, index) => (
             <Pressable
+            onPress={()=>navigation.navigate("Info",{
+                id: item.id,
+                title: item.title,
+                price: item?.price,
+                carouselImages: item.carouselImages,
+                color: item?.color,
+                size: item?.size,
+                oldPrice: item?.oldPrice,
+                item: item,
+            })}
               style={{
                 marginVertical: 10,
                 alignItems: "center",
@@ -367,7 +403,16 @@ console.log("Products",products)
                   borderRadius: 4,
                 }}
               >
-                <Text style={{textAlign:"center",color:"white",fontSize:13,fontWeight:"bold"}}>Upto {item?.offer} Off</Text>
+                <Text
+                  style={{
+                    textAlign: "center",
+                    color: "white",
+                    fontSize: 13,
+                    fontWeight: "bold",
+                  }}
+                >
+                  Upto {item?.offer} Off
+                </Text>
               </View>
             </Pressable>
           ))}
@@ -381,10 +426,48 @@ console.log("Products",products)
           }}
         />
 
-        <View style={{flexDirection:"row",alignItems:"center",flexWrap:"wrap"}}>
-            {products?.map((item,index)=> (
+        <View
+          style={{
+            marginHorizontal: 10,
+            marginTop: 20,
+            width: "45%",
+            marginBottom: open ? 50 : 15,
+          }}
+        >
+          <DropDownPicker
+            style={{
+              borderColor: "#B7B7B7",
+              height: 30,
+              marginBottom: open ? 120 : 15,
+
+            }}
+            open={open}
+            value={category} //genderValue
+            items={items}
+            setOpen={setOpen}
+            setValue={setCategory}
+            setItems={setItems}
+            placeholder="choose category"
+            placeholderStyle={styles.placeholderStyles}
+            onOpen={onGenderOpen}
+            // onChangeValue={onChange}
+            zIndex={3000}
+            zIndexInverse={1000}
+          />
+        </View>
+
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            flexWrap: "wrap",
+          }}
+        >
+          {products
+              ?.filter((item) => item.category === category)
+              .map((item, index) => (
                 <ProductItem item={item} key={index} />
-            ))}
+              ))}
         </View>
       </ScrollView>
     </SafeAreaView>

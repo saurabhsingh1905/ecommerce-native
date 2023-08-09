@@ -12,6 +12,7 @@ import { Ionicons } from "@expo/vector-icons";
 import CartScreen from "../screens/CartScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import { FontAwesome5 } from '@expo/vector-icons';
+import ProductInfoScreen from '../screens/ProductInfoScreen';
 
 
 const StackNavigator = () => {
@@ -78,7 +79,7 @@ function BottomTabs(){
       <Stack.Screen name="Login" component={LoginScreen} options={{headerShown:false}} />
       <Stack.Screen name="Register" component={RegisterScreen}  options={{headerShown:false}}/>
        <Stack.Screen name="Main" component={BottomTabs}  options={{headerShown:false}} />
-      {/* <Stack.Screen name="Settings" component={Settings} /> */} 
+      <Stack.Screen name="Info" component={ProductInfoScreen}  options={{headerShown:false}} /> 
     </Stack.Navigator>
     </NavigationContainer>
   )

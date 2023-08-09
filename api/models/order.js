@@ -2,9 +2,9 @@ const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema({
   user: {
-    type: mongoose.Schema.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: true,
+    require: true,
   },
   products: [
     {
@@ -26,7 +26,6 @@ const orderSchema = new mongoose.Schema({
       },
     },
   ],
-
   totalPrice: {
     type: Number,
     required: true,
@@ -57,16 +56,17 @@ const orderSchema = new mongoose.Schema({
       required: true,
     },
   },
-
   paymentMethod: {
     type: String,
     required: true,
   },
-  creadtedAt: {
+  createdAt: {
     type: Date,
-    dafault: Date.now,
+    default: Date.now,
   },
 });
 
+
 const Order = mongoose.model("Order",orderSchema);
-module.exports = Order
+
+module.exports = Order;

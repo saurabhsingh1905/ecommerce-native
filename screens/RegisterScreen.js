@@ -31,21 +31,26 @@ const RegisterScreen = () => {
     };
 
     //SEND A POST REQUEST TO THE BACKEND
-    axios.post("http://192.168.230.136:8000/register", user).then((response) => {
-      console.log(response);
-      Alert.alert(
-        "Registration Successful",
-        "You have been successfully registered"
-      );
-      setName("");
-      setEmail("");
-      setPassword("");
-    }).catch((error)=> {
+   
+      axios
+      .post("http://192.168.128.136:8000/register", user)
+      .then((response) => {
+        console.log(response);
         Alert.alert(
-            "Registration Error",
-            "An error occured while registering user")
-            console.log("registration failed",error)
-    })
+          "Registration successful",
+          "You have been registered Successfully"
+        );
+        setName("");
+        setEmail("");
+        setPassword("");
+      })
+      .catch((error) => {
+        Alert.alert(
+          "Registration Error",
+          "An error occurred while registering"
+        );
+        console.log("registration failed", error);
+      });
   };
 
   return (

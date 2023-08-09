@@ -8,17 +8,52 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Zocial } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
-  const [password, sewtPassword] = useState("");
+  const [password, setPassword] = useState("");
 
   const navigation = useNavigation();
+
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      try {
+        const token = await AsyncStorage.getItem("authToken");
+        if (token) {
+          navigation.replace("Main");
+        }
+      } catch (error) {
+        console.log("Error message", error);
+      }
+    };
+    checkLoginStatus();
+  }, []);
+
+  const handleLogin = () => {
+    const user = {
+      email: email,
+      password: password,
+    };
+    axios
+      .post("http://192.168.128.136:8000/login", user)
+      .then((response) => {
+        console.log(response);
+        const token = response.data.token;
+        AsyncStorage.setItem("authToken", token);
+        navigation.replace("Main");
+      })
+      .catch((error) => {
+        Alert.alert("Login Error", "Invalid Email");
+        console.log(error);
+      });
+  };
 
   return (
     <SafeAreaView
@@ -92,7 +127,12 @@ const LoginScreen = () => {
               marginTop: 30,
             }}
           >
-            <Ionicons name="lock-closed" size={24} color="gray" style={{ marginLeft: 8 }}/>
+            <Ionicons
+              name="lock-closed"
+              size={24}
+              color="gray"
+              style={{ marginLeft: 8 }}
+            />
             <TextInput
               style={{
                 color: "gray",
@@ -102,7 +142,7 @@ const LoginScreen = () => {
                 // marginLeft: 20,
               }}
               value={password}
-              onChangeText={(text) => sewtPassword(text)}
+              onChangeText={(text) => setPassword(text)}
               secureTextEntry={true}
               placeholder="Enter Your Password"
             />
@@ -127,6 +167,7 @@ const LoginScreen = () => {
         <View style={{ marginTop: 80 }} />
 
         <Pressable
+          onPress={handleLogin}
           style={{
             backgroundColor: "#FEBE10",
             width: 200,
@@ -148,7 +189,10 @@ const LoginScreen = () => {
           </Text>
         </Pressable>
 
-        <Pressable style={{ marginTop: 15 }} onPress={()=> navigation.navigate("Register")}>
+        <Pressable
+          style={{ marginTop: 15 }}
+          onPress={() => navigation.navigate("Register")}
+        >
           <Text style={{ textAlign: "center", color: "gray", fontSize: 16 }}>
             Don't have an account? Sign Up
           </Text>

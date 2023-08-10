@@ -23,6 +23,10 @@ import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { BottomModal, SlideAnimation, ModalContent } from "react-native-modals";
 import { Entypo } from "@expo/vector-icons";
+import { UserType } from "../UserContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import jwt_decode from "jwt-decode"
+
 
 const HomeScreen = () => {
   const list = [
@@ -202,7 +206,7 @@ const HomeScreen = () => {
 
   const [products, setProducts] = useState([]);
   const [addresses, setAddresses] = useState([]);
-  //const { userId, setUserId } = useContext(UserType);
+  const { userId, setUserId } = useContext(UserType);
   const [open, setOpen] = useState(false);
   const [category, setCategory] = useState("jewelery");
   //const [selectedAddress,setSelectedAdress] = useState("");
@@ -213,6 +217,38 @@ const HomeScreen = () => {
     { label: "electronics", value: "electronics" },
     { label: "women's clothing", value: "women's clothing" },
   ]);
+
+  useEffect(() => {
+    if (userId) {
+      fetchAddresses();
+    }
+  }, [userId, modalVisible]);
+
+  const fetchAddresses = async () => {
+    try {
+      const response = await axios.get(
+        `http://192.168.130.136:8000/addresses/${userId}`
+      );
+      const { addresses } = response.data;
+
+      setAddresses(addresses);
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+  console.log(addresses)
+
+  useEffect(() => {
+    const fetchUser = async() => {
+        const token = await AsyncStorage.getItem("authToken");
+        const decodedToken = jwt_decode(token);
+        const userId = decodedToken.userId;
+        setUserId(userId)
+    }
+
+    fetchUser();
+  },[]);
+  console.log(userId)
 
   useEffect(() => {
     const fetchData = async () => {

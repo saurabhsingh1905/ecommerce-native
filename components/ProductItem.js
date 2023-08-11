@@ -15,6 +15,9 @@ const ProductItem = ({ item }) => {
     }, 60000);
   };
 
+  // const itemprice = item.price*25
+  // console.log("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",itemprice)
+  
   return (
     <Pressable style={{ marginHorizontal: 15, marginVertical: 25 }}>
       <Image
@@ -40,7 +43,8 @@ const ProductItem = ({ item }) => {
         }}
       >
         <Text style={{ fontSize: 15, fontWeight: "bold" }}>
-        ₹ {item?.price *25} 
+        ₹ {item?.price } 
+    
         </Text>
         <Text style={{ color: "#FFC72C", fontWeight: "bold" }}>
           {item?.rating.rate} ratings

@@ -16,6 +16,7 @@ import ProductInfoScreen from '../screens/ProductInfoScreen';
 import AddAddressScreen from '../screens/AddAddressScreen';
 import AddressScreen from '../screens/AddressScreen';
 import ConfirmationScreen from '../screens/ConfirmationScreen';
+import OrderScreen from '../screens/OrderScreen';
 
 
 const StackNavigator = () => {
@@ -86,6 +87,7 @@ function BottomTabs(){
       <Stack.Screen name="Address" component={AddAddressScreen}  options={{headerShown:false}} /> 
       <Stack.Screen name="Add" component={AddressScreen}  options={{headerShown:false}} /> 
       <Stack.Screen name="Confirm" component={ConfirmationScreen}  options={{headerShown:false}} /> 
+      <Stack.Screen name="Order" component={OrderScreen}  options={{headerShown:false}} /> 
     </Stack.Navigator>
     </NavigationContainer>
   )
